@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +23,15 @@ namespace NeuralN
         public FeedForwardNetwork(int layerAmount, int[] layerSizes)
         {
             Random random = new Random();
+
+            this.biases = new List<double[]>();
+            this.weights = new List<double[,]>();
+
+            this.biasupdates = new List<double[]>();
+            this.weightsupdates = new List<double[,]>();
+
+            this.network = new List<double[]>();
+ 
             //initialize components of instance.
             this.lyerAmnt = layerAmount;
             this.lyerSzes = layerSizes;
@@ -53,36 +62,41 @@ namespace NeuralN
             for (int i = 1; i < this.lyerAmnt; i++)
             {
                 double[] biasupdatelayer = new double[this.lyerSzes[i]];
-                biasupdates.Add(biasupdatelayer);
+                this.biasupdates.Add(biasupdatelayer);
             }
 
             for (int i = 1; i < this.lyerAmnt; i++)
             {
                 double[,] weightsupdatematrix = new double[this.lyerSzes[i], this.lyerSzes[i - 1]];
-                weightsupdates.Add(weightsupdatematrix);
+                this.weightsupdates.Add(weightsupdatematrix);
             }
 
-            PrepNet();
+            for (int i = 0; i < this.lyerAmnt - 1; i++)
+            {
+                this.network.Add(new double[this.lyerSzes[i + 1]]);
+            }
+
         }
 
         public int getLayerAmount() { return this.lyerAmnt; }
         public int[] getLayerSizes() { return this.lyerSzes; }
 
-        private void PrepNet()
-        {
-            for (int i = 0; i < this.lyerAmnt - 1; i++)
-            {
-                this.network.Add(new double[this.lyerSzes[i + 1]]);
-            }
-        }
+        //private void PrepNet()
+        //{
+        //    this.network = new List<double[]>();
+        //    for (int i = 0; i < this.lyerAmnt - 1; i++)
+        //    {
+        //        this.network.Add(new double[this.lyerSzes[i + 1]]);
+        //    }
+        //}
 
         //training function
-        public void Train(double learningRate, int iterationsPerSet, double[] inputSet, double[,] outputSet)
+        public void Train(double learningRate, int iterationsPerSet, double[] inputSet, double[] outputSet)
         {
             for (int l = 0; l < iterationsPerSet; l++)
             {
-                
-                for (int i = 0; i < this.weightsupdates.length; i++)
+
+                for (int i = 0; i < this.weightsupdates.Count; i++)
                 {
                     double[,] mat = this.weightsupdates[i];
                     for (int j = 0; j < mat.GetLength(0); j++)
@@ -94,10 +108,10 @@ namespace NeuralN
                     }
                 }
 
-                for (int i = 0; i < this.biasupdates.length; i++)
+                for (int i = 0; i < this.biasupdates.Count; i++)
                 {
                     double[] biaslyer = this.biasupdates[i];
-                    for (int j = 0; j < biaslyer.length; j++)
+                    for (int j = 0; j < biaslyer.Length; j++)
                     {
                         biaslyer[j] = (-1 * learningRate * CostPDerivbiases(inputSet, outputSet, i, j));
                     }
@@ -109,14 +123,14 @@ namespace NeuralN
             }
         }
         //Cost Function
-        private double Cost(double[] inputSet, double[] outputSet)
+        public double Cost(double[] inputSet, double[] outputSet)
         {
             this.network.Insert(0, inputSet);
             for (int i = 1; i < this.lyerAmnt; i++)
             {
                 this.network[i] = Helper.Sigmoid(Helper.AddVec(Helper.MultVecMa(this.weights[i - 1], this.network[i - 1]), this.biases[i - 1]));
             }
-            double[] errVec = Helper.SubVec(outputSet, this.network[this.lyerAmnt]);
+            double[] errVec = Helper.SubVec(outputSet, this.network[this.lyerAmnt - 1]);
             double error = 0;
             for (int i = 0; i < errVec.Length; i++)
             {
