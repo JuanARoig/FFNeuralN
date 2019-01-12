@@ -81,15 +81,6 @@ namespace NeuralN
         public int getLayerAmount() { return this.lyerAmnt; }
         public int[] getLayerSizes() { return this.lyerSzes; }
 
-        //private void PrepNet()
-        //{
-        //    this.network = new List<double[]>();
-        //    for (int i = 0; i < this.lyerAmnt - 1; i++)
-        //    {
-        //        this.network.Add(new double[this.lyerSzes[i + 1]]);
-        //    }
-        //}
-
         //training function
         public void Train(double learningRate, int iterationsPerSet, double[] inputSet, double[] outputSet)
         {
