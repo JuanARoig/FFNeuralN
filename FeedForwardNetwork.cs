@@ -80,7 +80,12 @@ namespace NeuralN
 
         public int getLayerAmount() { return this.lyerAmnt; }
         public int[] getLayerSizes() { return this.lyerSzes; }
-
+        //Test function
+        public double Test(double[] inputTestSet, double[] outputTestSet)
+        {
+            double error = Cost(inputTestSet, outputTestSet);
+            return error;
+        }
         //training function
         public void Train(double learningRate, int iterationsPerSet, double[] inputSet, double[] outputSet)
         {
