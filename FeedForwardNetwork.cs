@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NeuralN
+namespace Iris
 {
     public class FeedForwardNetwork
     {
@@ -19,6 +19,11 @@ namespace NeuralN
         private List<double[,]> weightsupdates;
 
         private List<double[]> network;
+
+        public double[] getLayerFromNet(int index)
+        {
+            return this.network[index];
+        }
         //test with different amounts of layers. observe convergence.
         public FeedForwardNetwork(int layerAmount, int[] layerSizes)
         {
@@ -31,7 +36,7 @@ namespace NeuralN
             this.weightsupdates = new List<double[,]>();
 
             this.network = new List<double[]>();
- 
+
             //initialize components of instance.
             this.lyerAmnt = layerAmount;
             this.lyerSzes = layerSizes;
@@ -80,7 +85,7 @@ namespace NeuralN
 
         public int getLayerAmount() { return this.lyerAmnt; }
         public int[] getLayerSizes() { return this.lyerSzes; }
-        //Test function
+	    //Test function
         public double Test(double[] inputTestSet, double[] outputTestSet)
         {
             double error = Cost(inputTestSet, outputTestSet);
@@ -92,22 +97,22 @@ namespace NeuralN
             for (int l = 0; l < iterationsPerSet; l++)
             {
 
-                for (int i = 0; i < this.weightsupdates.Count; i++)
+                for (int i = this.weightsupdates.Count - 1; i >= 0; i--)
                 {
                     double[,] mat = this.weightsupdates[i];
-                    for (int j = 0; j < mat.GetLength(0); j++)
+                    for (int j = mat.GetLength(0) - 1; j >= 0; j--)
                     {
-                        for (int k = 0; k < mat.GetLength(1); k++)
+                        for (int k = mat.GetLength(1) - 1; k >= 0; k--)
                         {
                             mat[j, k] = (-1 * learningRate * CostPDerivweights(inputSet, outputSet, i, j, k));
                         }
                     }
                 }
 
-                for (int i = 0; i < this.biasupdates.Count; i++)
+                for (int i = this.biasupdates.Count - 1; i >= 0; i--)
                 {
                     double[] biaslyer = this.biasupdates[i];
-                    for (int j = 0; j < biaslyer.Length; j++)
+                    for (int j = biaslyer.Length - 1; j >= 0; j--)
                     {
                         biaslyer[j] = (-1 * learningRate * CostPDerivbiases(inputSet, outputSet, i, j));
                     }
@@ -170,8 +175,28 @@ namespace NeuralN
 
             return partiald;
         }
+        public void saveFeedForwardNetwork()
+        {
+            
+        }
 
+        private void saveWeights()
+        {
 
+        }
+        private void saveBiases()
+        {
+            List<double[]> save = new List<double[]>();
+            foreach (double[] bias in biases)
+            {
+                save.Add(bias);
+            }
+        }
+
+        public void pullFeedForwardNetwork()
+        {
+        
+        }
 
     }
 
